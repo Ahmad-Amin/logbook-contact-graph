@@ -1,5 +1,3 @@
-// src/components/LogBookChart.js
-
 import React, { useEffect, useState, useCallback } from "react";
 import ApexCharts from "react-apexcharts";
 import { db, collection, query, where, getDocs } from "../firebase";
@@ -164,7 +162,7 @@ const ContactsGraphWithAggregatedCalculations = () => {
             </h3>
           </div>
           <div className="flex items-center justify-center gap-3">
-            <button onClick={handlePrevWeek} disabled={currentWeek === 1}>
+            { currentWeek !== 1 && <button onClick={handlePrevWeek} disabled={currentWeek === 1}>
               <span>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -181,11 +179,11 @@ const ContactsGraphWithAggregatedCalculations = () => {
                   />
                 </svg>
               </span>
-            </button>
+            </button>}
             <p className="text-lg font-semibold text-[#17F9DA]">
               Week {currentWeek}
             </p>
-            <button onClick={handleNextWeek}>
+            {currentWeek <= 52 && <button onClick={handleNextWeek}>
               <span>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -201,7 +199,7 @@ const ContactsGraphWithAggregatedCalculations = () => {
                   />
                 </svg>
               </span>
-            </button>
+            </button>}
           </div>
           {loading ? (
             <Loader />
