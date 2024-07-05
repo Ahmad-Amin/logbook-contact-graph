@@ -3,8 +3,6 @@ import ApexCharts from "react-apexcharts";
 import { db, collection, query, where, getDocs } from "../firebase";
 import Loader from "./Loader";
 
-const startingDateOfThisYear = "2024-01-02T00:00:00";
-
 const ContactsGraphWithAggregatedCalculations = () => {
   const [weekData, setWeekData] = useState({});
   const [currentWeek, setCurrentWeek] = useState(1);
@@ -28,7 +26,9 @@ const ContactsGraphWithAggregatedCalculations = () => {
         const data = doc.data();
         const date = data.date;
         weeklyData[date] = data.LogCount;
-        const month = new Date(date).toLocaleString("default", { month: "long" });
+        const month = new Date(date).toLocaleString("default", {
+          month: "long",
+        });
         monthSet.add(month);
       });
 
@@ -51,6 +51,11 @@ const ContactsGraphWithAggregatedCalculations = () => {
 
     fetchData();
   }, [getWeeklyData, currentWeek]);
+
+  const formatDateLabel = (date) => {
+    const [month, day] = date.split("-");
+    return `${month}/${day}`;
+  };
 
   const generateChartData = (data, labels) => ({
     series: [
@@ -80,7 +85,7 @@ const ContactsGraphWithAggregatedCalculations = () => {
         },
       },
       xaxis: {
-        categories: labels,
+        categories: labels.map(formatDateLabel),
         labels: {
           style: {
             colors: "#FFFFFF",
@@ -89,6 +94,7 @@ const ContactsGraphWithAggregatedCalculations = () => {
       },
       yaxis: {
         min: 0,
+        tickAmount: 6,
         labels: {
           style: {
             colors: "#FFFFFF",
@@ -149,11 +155,14 @@ const ContactsGraphWithAggregatedCalculations = () => {
   };
 
   return (
-    <div className="p-10 bg-[#000030] text-white w-full h-screen">
-      <div className="bg-[#0A0B39] p-10">
+    <div
+      className="p-4 md:p-10 bg-[#000030] text-white w-full h-screen"
+      style={{ backgroundImage: "url('/background.png')" }}
+    >
+      <div className="bg-[#0A0B39] p-4 md:p-10 w-full md:w-10/12 mx-auto">
         <div>
           <h2 className="text-3xl font-semibold text-start my-3">
-            LogBook Contact Data
+            Number of Contacts Per Day
           </h2>
           <hr className="mb-4" />
           <div className="flex flex-row justify-end mr-10">
@@ -162,54 +171,55 @@ const ContactsGraphWithAggregatedCalculations = () => {
             </h3>
           </div>
           <div className="flex items-center justify-center gap-3">
-            { currentWeek !== 1 && <button onClick={handlePrevWeek} disabled={currentWeek === 1}>
-              <span>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                  className="w-5 stroke-[#17F9DA]"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M15.75 19.5 8.25 12l7.5-7.5"
-                  />
-                </svg>
-              </span>
-            </button>}
+            {currentWeek !== 1 && (
+              <button onClick={handlePrevWeek} disabled={currentWeek === 1}>
+                <span>
+                  <svg
+                    width="9"
+                    height="14"
+                    viewBox="0 0 9 14"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M4.5897e-07 7L9 0.5L9 13.5L4.5897e-07 7Z"
+                      fill="#17F9DA"
+                    />
+                  </svg>
+                </span>
+              </button>
+            )}
             <p className="text-lg font-semibold text-[#17F9DA]">
               Week {currentWeek}
             </p>
-            {currentWeek <= 52 && <button onClick={handleNextWeek}>
-              <span>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  className="w-5 stroke-[#17F9DA]"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="m8.25 4.5 7.5 7.5-7.5 7.5"
-                  />
-                </svg>
-              </span>
-            </button>}
+            {currentWeek <= 52 && (
+              <button onClick={handleNextWeek}>
+                <span>
+                  <svg
+                    width="9"
+                    height="14"
+                    viewBox="0 0 9 14"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M9 7L3.57352e-08 13.5L9.53674e-07 0.5L9 7Z"
+                      fill="#17F9DA"
+                    />
+                  </svg>
+                </span>
+              </button>
+            )}
           </div>
           {loading ? (
             <Loader />
           ) : (
-            <div className="h-[400px] mx-auto mt-2">
+            <div className="h-[300px] mx-auto mt-2">
               <ApexCharts
                 options={getChartData().options}
                 series={getChartData().series}
                 type="line"
-                height={400}
+                height={300}
               />
             </div>
           )}
