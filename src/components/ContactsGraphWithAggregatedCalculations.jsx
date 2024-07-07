@@ -53,7 +53,8 @@ const ContactsGraphWithAggregatedCalculations = () => {
   }, [getWeeklyData, currentWeek]);
 
   const formatDateLabel = (date) => {
-    const [month, day] = date.split("-");
+    console.log('date->', date)
+    const [year, month, day] = date.split("-");
     return `${month}/${day}`;
   };
 
